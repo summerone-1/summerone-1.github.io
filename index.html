@@ -1,25 +1,23 @@
-{% include 'includes/head.swig' %}
-<div class="random-center hide-area">
-  <div id="random-index">
-    <div class="center-field">
-      <img class="avatar" src="{{ url_for(config.avatar || theme.avatar) }}" width=120 height=120 onClick="openUserCard()">
-    </div>
-    <div class="center-field">
-      <div class="title" onClick="openUserCard()">{{ config.title }}</div>
-      <div class="sub-title" onClick="openUserCard()">{{ config.subtitle }}</div>
-    </div>
-    <hr >
-    <div class="center-field">
-      <ul class="index-nav-link">
-        {% set menu = config.menu || theme.menu %}
-        {% for key in Object.keys(menu)  %}
-          {% if menu[key] != '/'  %}
-            <li><a href="{{ url_for(menu[key]) }}">{{ key }}</a></li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-      {% include 'includes/social-icon.swig' %}
-    </div>
-  </div>
-</div>
-{% include 'includes/footer.swig' %}
+{% extends '_layout.swig' %}
+{% import '_macro/post.swig' as post_template %}
+{% import '_macro/sidebar.swig' as sidebar_template %}
+
+{% block title %}{{ config.title }}{% if theme.index_with_subtitle and config.subtitle %} - {{config.subtitle }}{% endif %}{% endblock %}
+
+{% block page_class %}
+  {% if is_home() %}page-home{% endif -%}
+{% endblock %}
+
+{% block content %}
+  <section id="posts" class="posts-expand">
+    {% for post in page.posts %}
+      {{ post_template.render(post, true) }}
+    {% endfor %}
+  </section>
+
+  {% include '_partials/pagination.swig' %}
+{% endblock %}
+
+{% block sidebar %}
+  {{ sidebar_template.render(false) }}
+{% endblock %}
